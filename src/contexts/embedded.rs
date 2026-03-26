@@ -6,5 +6,5 @@ use sqlx::SqlitePool;
 pub struct EmbeddedApp {
     pub database: SqlitePool,
     pub storage_client: Client,
-    pub profile_pictures_bucket_id: String,
+    pub bucket_id: String,
 }

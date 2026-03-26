@@ -36,12 +36,12 @@ where
 pub async fn fetch_storage_object(
     &self,
     #[implicit] storage_client: &Client,
-    #[implicit] profile_pictures_bucket_id: &str,
+    #[implicit] bucket_id: &str,
     object_id: &str,
 ) -> anyhow::Result<Vec<u8>> {
     let output = storage_client
         .get_object()
-        .bucket(profile_pictures_bucket_id)
+        .bucket(bucket_id)
         .key(object_id)
         .send()
         .await?;

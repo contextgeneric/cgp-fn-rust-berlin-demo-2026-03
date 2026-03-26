@@ -19,7 +19,7 @@ impl App {
         let output = self
             .storage_client
             .get_object()
-            .bucket(&self.profile_pictures_bucket_id)
+            .bucket(&self.bucket_id)
             .key(object_id)
             .send()
             .await?;

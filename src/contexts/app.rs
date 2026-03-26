@@ -6,5 +6,5 @@ use sqlx::PgPool;
 pub struct App {
     pub database: PgPool,
     pub storage_client: Client,
-    pub profile_pictures_bucket_id: String,
+    pub bucket_id: String,
 }
