@@ -1,0 +1,106 @@
+use aws_sdk_s3::Client;
+use cgp::prelude::*;
+use google_cloud_storage::client::Storage;
+use image::RgbImage;
+use sqlx::PgPool;
+
+use crate::contexts::app::App;
+use crate::contexts::gcloud::GCloudApp;
+use crate::types::{User, UserId};
+
+#[cgp_fn]
+#[async_trait]
+pub async fn get_user(
+    &self,
+    #[implicit] database: &PgPool,
+    user_id: &UserId,
+) -> anyhow::Result<User> {
+    let user =
+        sqlx::query_as("SELECT name, email, profile_picture_object_id FROM users WHERE id = $1")
+            .bind(user_id.0 as i64)
+            .fetch_one(database)
+            .await?;
+
+    Ok(user)
+}
+
+#[async_trait]
+#[cgp_component(StorageObjectFetcher)]
+pub trait CanFetchStorageObject {
+    async fn fetch_storage_object(&self, object_id: &str) -> anyhow::Result<Vec<u8>>;
+}
+
+#[cgp_impl(new FetchS3Object)]
+impl StorageObjectFetcher {
+    async fn fetch_storage_object(
+        &self,
+        #[implicit] storage_client: &Client,
+        #[implicit] profile_pictures_bucket_id: &str,
+        object_id: &str,
+    ) -> anyhow::Result<Vec<u8>> {
+        let output = storage_client
+            .get_object()
+            .bucket(profile_pictures_bucket_id)
+            .key(object_id)
+            .send()
+            .await?;
+
+        let data = output.body.collect().await?.into_bytes().to_vec();
+        Ok(data)
+    }
+}
+
+#[cgp_impl(new FetchGCloudObject)]
+impl StorageObjectFetcher {
+    async fn fetch_storage_object(
+        &self,
+        #[implicit] storage_client: &Storage,
+        #[implicit] profile_pictures_bucket_id: &str,
+        object_id: &str,
+    ) -> anyhow::Result<Vec<u8>> {
+        let mut reader = storage_client
+            .read_object(profile_pictures_bucket_id, object_id)
+            .send()
+            .await?;
+
+        let mut contents = Vec::new();
+        while let Some(chunk) = reader.next().await.transpose()? {
+            contents.extend_from_slice(&chunk);
+        }
+
+        Ok(contents)
+    }
+}
+
+#[cgp_fn]
+#[async_trait]
+#[uses(GetUser, CanFetchStorageObject)]
+pub async fn get_user_profile_picture(&self, user_id: &UserId) -> anyhow::Result<Option<RgbImage>> {
+    let user = self.get_user(user_id).await?;
+
+    if let Some(object_id) = user.profile_picture_object_id {
+        let data = self.fetch_storage_object(&object_id).await?;
+        let image = image::load_from_memory(&data)?.to_rgb8();
+
+        Ok(Some(image))
+    } else {
+        Ok(None)
+    }
+}
+
+delegate_components! {
+    App {
+        StorageObjectFetcherComponent: FetchS3Object,
+    }
+}
+
+delegate_components! {
+    GCloudApp {
+        StorageObjectFetcherComponent: FetchGCloudObject,
+    }
+}
+
+pub trait CheckGetUserProfilePicture: GetUserProfilePicture {}
+
+impl CheckGetUserProfilePicture for App {}
+impl CheckGetUserProfilePicture for GCloudApp {}
