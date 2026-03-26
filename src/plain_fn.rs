@@ -1,11 +1,7 @@
 use aws_sdk_s3::Client;
-use cgp::prelude::*;
 use image::RgbImage;
 use sqlx::PgPool;
 
-use crate::contexts::app::App;
-use crate::contexts::minimal::MinimalApp;
-use crate::contexts::smart::SmartApp;
 use crate::types::{User, UserId};
 
 pub async fn get_user(database: &PgPool, user_id: &UserId) -> anyhow::Result<User> {
