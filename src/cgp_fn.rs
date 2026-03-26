@@ -4,6 +4,8 @@ use image::RgbImage;
 use sqlx::PgPool;
 
 use crate::contexts::app::App;
+use crate::contexts::minimal::MinimalApp;
+use crate::contexts::smart::SmartApp;
 use crate::types::{User, UserId};
 
 #[cgp_fn]
@@ -59,3 +61,9 @@ pub async fn get_user_profile_picture(&self, user_id: &UserId) -> anyhow::Result
 pub trait CheckGetUserProfilePicture: GetUserProfilePicture {}
 
 impl CheckGetUserProfilePicture for App {}
+
+pub trait CheckGetUser: GetUser {}
+
+impl CheckGetUser for App {}
+impl CheckGetUser for MinimalApp {}
+impl CheckGetUser for SmartApp {}

@@ -1,6 +1,6 @@
 use aws_sdk_s3::Client;
 use cgp::prelude::*;
-use sqlx::{PgPool, SqlitePool};
+use sqlx::SqlitePool;
 
 #[derive(HasField)]
 pub struct EmbeddedApp {
