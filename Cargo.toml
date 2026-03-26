@@ -1,0 +1,21 @@
+[package]
+name            = "cgp-example-profile-picture"
+version         = "0.1.0"
+rust-version    = "1.90"
+edition         = "2024"
+license         = "MIT"
+repository      = "https://github.com/contextgeneric/cgp-fn-rust-berlin-demo-2026-03"
+authors         = ["Soares Chen <soares.chen@maybevoid.com>"]
+keywords        = ["cgp"]
+
+[dependencies]
+cgp             = { version = "0.7.0" }
+
+anyhow          = { version = "1" }
+sqlx            = { version = "0.8.6", features = ["postgres"] }
+aws-sdk-s3      = { version = "1.127.0" }
+image           = { version = "0.25.10" }
+
+[patch.crates-io]
+cgp                 = { git = "https://github.com/contextgeneric/cgp.git", branch = "main" }
+cgp-error-anyhow    = { git = "https://github.com/contextgeneric/cgp.git", branch = "main" }
