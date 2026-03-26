@@ -22,12 +22,12 @@ where
     for<'a> <Db as sqlx::Database>::Arguments<'a>: sqlx::IntoArguments<'a, Db>,
     for<'a> &'a mut <Db as sqlx::Database>::Connection: sqlx::Executor<'a, Database = Db>,
 {
-    let user = sqlx::query_as::<_, User>(
-        "SELECT name, email, profile_picture_object_id FROM users WHERE id = $1",
-    )
-    .bind(user_id.0 as i64)
-    .fetch_one(database)
-    .await?;
+    let user =
+        sqlx::query_as("SELECT name, email, profile_picture_object_id FROM users WHERE id = $1")
+            .bind(user_id.0 as i64)
+            .fetch_one(database)
+            .await?;
+
     Ok(user)
 }
 
@@ -45,6 +45,7 @@ pub async fn fetch_storage_object(
         .key(object_id)
         .send()
         .await?;
+
     let data = output.body.collect().await?.into_bytes().to_vec();
     Ok(data)
 }
