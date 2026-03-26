@@ -12,7 +12,7 @@ keywords        = ["cgp"]
 cgp             = { version = "0.7.0" }
 
 anyhow          = { version = "1" }
-sqlx            = { version = "0.8.6", features = ["postgres"] }
+sqlx            = { version = "0.8.6", features = ["postgres", "sqlite"] }
 aws-sdk-s3      = { version = "1.127.0" }
 image           = { version = "0.25.10" }
 
