@@ -4,4 +4,5 @@ pub mod cgp_impl;
 pub mod contexts;
 pub mod method;
 pub mod plain_fn;
+pub mod plain_trait;
 pub mod types;
