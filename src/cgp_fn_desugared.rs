@@ -8,11 +8,9 @@ use crate::contexts::minimal::MinimalApp;
 use crate::contexts::smart::SmartApp;
 use crate::types::{User, UserId};
 
+#[async_trait]
 pub trait GetUser {
-    fn get_user(
-        &self,
-        user_id: &UserId,
-    ) -> impl ::core::future::Future<Output = anyhow::Result<User>>;
+    async fn get_user(&self, user_id: &UserId) -> anyhow::Result<User>;
 }
 
 impl<Context> GetUser for Context
@@ -31,11 +29,9 @@ where
     }
 }
 
+#[async_trait]
 pub trait FetchStorageObject {
-    fn fetch_storage_object(
-        &self,
-        object_id: &str,
-    ) -> impl ::core::future::Future<Output = anyhow::Result<Vec<u8>>>;
+    async fn fetch_storage_object(&self, object_id: &str) -> anyhow::Result<Vec<u8>>;
 }
 
 impl<Context> FetchStorageObject for Context
@@ -57,11 +53,9 @@ where
     }
 }
 
+#[async_trait]
 pub trait GetUserProfilePicture {
-    fn get_user_profile_picture(
-        &self,
-        user_id: &UserId,
-    ) -> impl ::core::future::Future<Output = anyhow::Result<Option<RgbImage>>>;
+    async fn get_user_profile_picture(&self, user_id: &UserId) -> anyhow::Result<Option<RgbImage>>;
 }
 
 impl<Context> GetUserProfilePicture for Context

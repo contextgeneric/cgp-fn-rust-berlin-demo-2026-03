@@ -1,14 +1,23 @@
 use aws_sdk_s3::Client;
 use image::RgbImage;
+use rig::agent::Agent;
+use rig::providers::openai;
 use sqlx::PgPool;
 
 use crate::contexts::app::App;
+use crate::contexts::smart::SmartApp;
 use crate::types::{User, UserId};
 
 pub trait AppFields {
     fn database(&self) -> &PgPool;
     fn storage_client(&self) -> &Client;
     fn bucket_id(&self) -> &str;
+}
+
+pub trait SmartAppFields: AppFields {
+    fn open_ai_agent(&self) -> &Agent<openai::CompletionModel>;
+
+    fn open_ai_client(&self) -> &openai::Client;
 }
 
 pub async fn get_user<Context: AppFields>(
@@ -67,5 +76,29 @@ impl AppFields for App {
 
     fn bucket_id(&self) -> &str {
         &self.bucket_id
+    }
+}
+
+impl AppFields for SmartApp {
+    fn database(&self) -> &PgPool {
+        &self.database
+    }
+
+    fn storage_client(&self) -> &Client {
+        &self.storage_client
+    }
+
+    fn bucket_id(&self) -> &str {
+        &self.bucket_id
+    }
+}
+
+impl SmartAppFields for SmartApp {
+    fn open_ai_agent(&self) -> &Agent<openai::CompletionModel> {
+        &self.open_ai_agent
+    }
+
+    fn open_ai_client(&self) -> &openai::Client {
+        &self.open_ai_client
     }
 }
