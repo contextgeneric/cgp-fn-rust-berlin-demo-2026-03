@@ -18,7 +18,8 @@ where
     Self: HasField<Symbol!("database"), Value = PgPool>,
 {
     async fn get_user(&self, user_id: &UserId) -> anyhow::Result<User> {
-        let database: &PgPool = self.get_field(PhantomData::<Symbol!("database")>);
+        let database = self.get_field(PhantomData::<Symbol!("database")>);
+
         let user = sqlx::query_as(
             "SELECT name, email, profile_picture_object_id FROM users WHERE id = $1",
         )
@@ -40,8 +41,9 @@ where
         + HasField<Symbol!("bucket_id"), Value = String>,
 {
     async fn fetch_storage_object(&self, object_id: &str) -> anyhow::Result<Vec<u8>> {
-        let storage_client: &Client = self.get_field(PhantomData::<Symbol!("storage_client")>);
-        let bucket_id: &str = self.get_field(PhantomData::<Symbol!("bucket_id")>).as_str();
+        let storage_client = self.get_field(PhantomData::<Symbol!("storage_client")>);
+        let bucket_id = self.get_field(PhantomData::<Symbol!("bucket_id")>).as_str();
+
         let output = storage_client
             .get_object()
             .bucket(bucket_id)
