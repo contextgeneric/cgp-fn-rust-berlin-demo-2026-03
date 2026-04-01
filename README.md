@@ -2,7 +2,7 @@
 
 A step-by-step tutorial demonstrating how to evolve a real-world Rust application from a single monolithic function all the way to a fully modular, context-generic design using [CGP — Context-Generic Programming](https://contextgeneric.dev).
 
-This demo was created for the Rust Berlin meetup in March 2026 to introduce beginners to CGP and the new `#[cgp_fn]` and `#[cgp_impl]` macros added in CGP v0.7.0.
+This demo was created for the Rust Berlin meetup in March 2026 to introduce beginners to CGP and the new `#[cgp_fn]` and `#[cgp_impl]` macros added in CGP v0.7.0. [**Link to presentation**](https://www.figma.com/deck/f1HbRoLZhzcwsKYnL1zVSE)
 
 ## Disclaimer
 
